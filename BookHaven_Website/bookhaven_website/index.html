@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BookHaven — Find Your Next Favourite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="announcement">A little reading goes a long way ✨ <span>Discover your next favourite book</span></div>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="BookHaven home"><span class="brand-mark">B</span><span>book<span class="brand-light">haven</span><small>YOUR NEXT CHAPTER STARTS HERE</small></span></a>
+    <nav class="nav-links">
+      <a href="#discover">Discover</a><a href="#genres">Genres</a><a href="#popular">Popular books</a>
+    </nav>
+    <button class="saved-button" id="savedToggle" type="button">♡ <span>My shelf</span> <b id="savedCount">0</b></button>
+  </header>
+
+  <main>
+    <section class="hero" id="discover">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="sparkle">✦</span> YOUR PERSONAL BOOK CORNER</div>
+        <h1>Somewhere,<br>there’s a book<br><em>waiting for you.</em></h1>
+        <p>Search stories, explore new worlds, and find the book that feels like it was written just for you.</p>
+        <form class="search-form" id="searchForm">
+          <span class="search-icon">⌕</span>
+          <input id="searchInput" type="search" placeholder="Search by title, author, or keyword..." aria-label="Search books" />
+          <button type="submit">Find a book <span>→</span></button>
+        </form>
+        <div class="quick-search"><span>Try:</span><button type="button" class="quick" data-query="Harry Potter">Harry Potter</button><button type="button" class="quick" data-query="romance">Romance</button><button type="button" class="quick" data-query="Agatha Christie">Agatha Christie</button></div>
+        <div class="hero-stats"><div><strong>Millions</strong><span>of books to explore</span></div><i></i><div><strong>Your next read</strong><span>is one search away</span></div></div>
+      </div>
+      <div class="hero-art" aria-label="Decorative book illustration">
+        <div class="sun-shape"></div><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <div class="floating-note note-one">✦ a new adventure</div>
+        <div class="book-stack">
+          <div class="book book-back"><span>THE ART OF<br>GETTING LOST</span><small>little adventures</small></div>
+          <div class="book book-middle"><span>WILD<br>HEART</span><small>stories that stay</small></div>
+          <div class="book book-front"><span>THE<br>SECRET<br>GARDEN</span><small>F. H. BURNETT</small><div class="flower">✿</div></div>
+        </div>
+        <div class="floating-note note-two">take a page<br>out of life ♡</div>
+        <div class="tiny-star star-one">✳</div><div class="tiny-star star-two">✦</div>
+      </div>
+    </section>
+
+    <section class="category-section" id="genres">
+      <div class="section-heading"><div><span class="eyebrow">FOLLOW YOUR CURIOSITY</span><h2>What are you in the mood for?</h2></div><span class="section-side-note">Pick a feeling. Find a story.</span></div>
+      <div class="genre-grid">
+        <button class="genre-card romance" data-query="romance"><span class="genre-icon">♡</span><span><b>Romance</b><small>Love & longing</small></span><span class="genre-arrow">↗</span></button>
+        <button class="genre-card fantasy" data-query="fantasy"><span class="genre-icon">✧</span><span><b>Fantasy</b><small>Magic & wonder</small></span><span class="genre-arrow">↗</span></button>
+        <button class="genre-card mystery" data-query="mystery"><span class="genre-icon">⌕</span><span><b>Mystery</b><small>Clues & secrets</small></span><span class="genre-arrow">↗</span></button>
+        <button class="genre-card selfhelp" data-query="self help"><span class="genre-icon">☼</span><span><b>Self-growth</b><small>Mind & meaning</small></span><span class="genre-arrow">↗</span></button>
+        <button class="genre-card scifi" data-query="science fiction"><span class="genre-icon">☄</span><span><b>Sci-fi</b><small>Beyond the stars</small></span><span class="genre-arrow">↗</span></button>
+      </div>
+    </section>
+
+    <section class="results-section" id="popular">
+      <div class="section-heading results-heading"><div><span class="eyebrow">THE WORLD OF BOOKS, AT YOUR FINGERTIPS</span><h2 id="resultsTitle">A few reader favourites</h2><p id="resultsSubtitle">Real book information, ready for you to explore.</p></div><div class="sort-wrap"><label for="sortSelect">Sort by</label><select id="sortSelect"><option value="relevance">Best match</option><option value="rating">Highest rating</option><option value="title">Title A–Z</option></select></div></div>
+      <div class="status" id="status" aria-live="polite"><span class="loader"></span> Finding lovely books for you...</div>
+      <div class="book-grid" id="bookGrid"></div>
+      <div class="more-row"><button id="loadMore" class="outline-button" type="button" hidden>Explore more books <span>→</span></button></div>
+    </section>
+    <section class="quote-banner"><div class="quote-mark">“</div><p>A reader lives a thousand lives before he dies. The man who never reads lives only one.</p><span>— George R. R. Martin</span><div class="quote-decoration">✳</div></section>
+  </main>
+  <footer><a class="brand footer-brand" href="#"><span class="brand-mark">B</span><span>book<span class="brand-light">haven</span><small>YOUR NEXT CHAPTER STARTS HERE</small></span></a><p>Made for curious minds and late-night readers. <span>✦</span></p><small>Book information provided by Open Library. Ratings may not be available for every title.</small></footer>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="script.js"></script>
+</body>
+</html>

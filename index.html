@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3ec">
+  <title>Leaf &amp; Lore — Book Finder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f3ec;
+      --ink: #182720;
+      --muted: #69756d;
+      --green: #244b3c;
+      --green-dark: #17382c;
+      --lime: #d7e578;
+      --coral: #e9795d;
+      --line: #e1e3d9;
+      --white: #fffefa;
+      --serif: "Playfair Display", Georgia, serif;
+      --sans: "DM Sans", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .topbar { height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(20px, 6vw, 92px); border-bottom: 1px solid rgba(24,39,32,.1); }
+    .brand { display: inline-flex; gap: 10px; align-items: center; color: var(--ink); text-decoration: none; font-family: var(--serif); font-size: 21px; font-weight: 700; }
+    .brand-mark { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 50%; background: var(--lime); font-family: var(--sans); font-size: 16px; }
+    .top-note { color: var(--muted); font-size: 12px; letter-spacing: .4px; }
+    .hero { position: relative; overflow: hidden; padding: 76px 20px 58px; text-align: center; background-color: #e9eddd; background-image: radial-gradient(rgba(36,75,60,.12) .8px, transparent .8px); background-size: 17px 17px; }
+    .hero::before, .hero::after { position: absolute; content: ""; width: 180px; height: 180px; border: 1px solid rgba(36,75,60,.12); border-radius: 50%; }
+    .hero::before { left: -78px; top: 18px; }
+    .hero::after { right: -82px; bottom: -92px; width: 250px; height: 250px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 15px; color: var(--green); font-size: 11px; font-weight: 700; letter-spacing: 1.7px; text-transform: uppercase; }
+    .eyebrow::before { width: 18px; height: 1px; content: ""; background: var(--coral); }
+    h1 { margin: 0; font-family: var(--serif); font-size: clamp(38px, 6vw, 64px); font-weight: 600; letter-spacing: 0; line-height: 1.08; }
+    h1 span { color: var(--green); font-style: italic; }
+    .hero-copy { margin: 15px auto 28px; color: #56645b; font-size: 14px; }
+    .search-form { position: relative; z-index: 1; display: flex; max-width: 650px; height: 58px; margin: auto; padding: 5px; border: 1px solid rgba(24,39,32,.12); border-radius: 7px; background: var(--white); box-shadow: 0 10px 30px rgba(27,50,38,.08); }
+    .search-icon { width: 48px; display: grid; flex: none; place-items: center; color: var(--muted); font-size: 22px; }
+    .search-form input { min-width: 0; flex: 1; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 14px; }
+    .search-form input::placeholder { color: #929b93; }
+    .search-button { display: inline-flex; gap: 9px; align-items: center; justify-content: center; min-width: 124px; border: 0; border-radius: 4px; background: var(--green); color: white; font-size: 13px; font-weight: 600; transition: background .2s, transform .2s; }
+    .search-button:hover { transform: translateY(-1px); background: var(--green-dark); }
+    .search-button:disabled { cursor: wait; opacity: .7; }
+    .search-hint { margin: 13px 0 0; color: #758078; font-size: 11px; }
+    main { max-width: 1220px; margin: 0 auto; padding: 45px 28px 70px; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 23px; }
+    .section-kicker { margin: 0 0 6px; color: var(--coral); font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+    h2 { margin: 0; font-family: var(--serif); font-size: 29px; font-weight: 600; }
+    .result-count { margin: 8px 0 0; color: var(--muted); font-size: 12px; }
+    .sort-wrap { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 11px; }
+    .sort-wrap select { padding: 9px 30px 9px 11px; border: 1px solid var(--line); border-radius: 4px; background: var(--white); color: var(--ink); font-size: 12px; }
+    .filter-row { display: flex; align-items: center; gap: 8px; min-height: 38px; margin-bottom: 21px; overflow-x: auto; scrollbar-width: thin; }
+    .filter-label { flex: none; margin-right: 4px; color: var(--muted); font-size: 11px; }
+    .filter-chip { flex: none; padding: 7px 12px; border: 1px solid var(--line); border-radius: 20px; background: transparent; color: #56645b; font-size: 11px; transition: .2s; }
+    .filter-chip:hover, .filter-chip.active { border-color: var(--green); background: var(--green); color: white; }
+    .book-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 26px 20px; }
+    .book-card { min-width: 0; animation: arrive .35s both; }
+    @keyframes arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .cover-wrap { position: relative; display: grid; aspect-ratio: 3 / 4.15; place-items: center; overflow: hidden; border-radius: 3px; background: #e4e6dc; box-shadow: 0 5px 12px rgba(24,39,32,.13); }
+    .cover-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s; }
+    .book-card:hover .cover-wrap img { transform: scale(1.035); }
+    .cover-fallback { display: grid; width: 100%; height: 100%; place-items: center; padding: 20px; background: linear-gradient(145deg, #dbe7cc, #c8d6bf); color: var(--green); font-family: var(--serif); font-size: 21px; line-height: 1.25; text-align: center; }
+    .cover-fallback::before { position: absolute; content: ""; width: 70%; aspect-ratio: 1; border: 1px solid rgba(36,75,60,.22); border-radius: 50%; }
+    .cover-tag { position: absolute; top: 10px; left: 10px; max-width: calc(100% - 20px); padding: 5px 8px; overflow: hidden; border-radius: 3px; background: var(--lime); color: var(--ink); font-size: 9px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .book-info { padding: 12px 1px 0; }
+    .book-title { display: -webkit-box; margin: 0 0 4px; overflow: hidden; color: var(--ink); font-family: var(--serif); font-size: 16px; font-weight: 600; line-height: 1.35; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+    .book-author { margin: 0; overflow: hidden; color: var(--muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+    .book-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; color: #626f66; font-size: 10px; }
+    .rating { color: #946419; font-weight: 700; }
+    .empty-state { grid-column: 1 / -1; padding: 56px 20px; border: 1px dashed #cbd2c6; border-radius: 6px; color: var(--muted); text-align: center; }
+    .empty-state strong { display: block; margin-bottom: 7px; color: var(--ink); font-family: var(--serif); font-size: 20px; font-weight: 600; }
+    .empty-state p { margin: 0; font-size: 12px; }
+    .loader { grid-column: 1 / -1; display: grid; min-height: 190px; place-items: center; color: var(--muted); font-size: 13px; }
+    .loader::before { width: 24px; height: 24px; margin-bottom: 10px; border: 2px solid #d7dfd3; border-top-color: var(--green); border-radius: 50%; content: ""; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .detail-overlay { position: fixed; z-index: 5; inset: 0; display: none; place-items: center; padding: 20px; background: rgba(15,29,22,.58); }
+    .detail-overlay.open { display: grid; }
+    .detail-panel { position: relative; display: grid; grid-template-columns: minmax(150px, 220px) 1fr; gap: 28px; width: min(650px, 100%); max-height: 85vh; padding: 28px; overflow: auto; border-radius: 7px; background: var(--white); box-shadow: 0 20px 70px rgba(0,0,0,.2); }
+    .detail-cover { width: 100%; aspect-ratio: 3 / 4.15; object-fit: cover; border-radius: 3px; background: #e4e6dc; }
+    .detail-close { position: absolute; top: 12px; right: 14px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: #eff1e9; color: var(--ink); font-size: 20px; }
+    .detail-copy { padding: 12px 12px 0 0; }
+    .detail-copy h3 { margin: 0 30px 8px 0; font-family: var(--serif); font-size: 27px; line-height: 1.2; }
+    .detail-byline { margin: 0 0 20px; color: var(--muted); font-size: 13px; }
+    .detail-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; margin: 0 0 19px; }
+    .detail-facts div { color: var(--muted); font-size: 10px; }
+    .detail-facts strong { display: block; margin-top: 4px; color: var(--ink); font-size: 12px; font-weight: 600; }
+    .detail-subjects { display: flex; flex-wrap: wrap; gap: 6px; }
+    .detail-subjects span { padding: 6px 8px; border-radius: 3px; background: #edf0e6; color: #526356; font-size: 10px; }
+    footer { padding: 21px; border-top: 1px solid var(--line); color: #849087; font-size: 10px; text-align: center; }
+    footer a { color: var(--green); }
+    @media (max-width: 850px) { .book-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 580px) {
+      .topbar { height: 60px; }
+      .top-note { font-size: 10px; }
+      .hero { padding: 58px 17px 42px; }
+      .hero-copy { max-width: 310px; line-height: 1.6; }
+      .search-form { height: 54px; }
+      .search-icon { width: 38px; }
+      .search-button { min-width: 88px; font-size: 12px; }
+      main { padding: 34px 17px 52px; }
+      .section-head { align-items: start; }
+      h2 { font-size: 25px; }
+      .sort-wrap { align-items: end; flex-direction: column; gap: 5px; }
+      .sort-wrap select { max-width: 135px; }
+      .book-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 23px 14px; }
+      .detail-panel { grid-template-columns: 110px 1fr; gap: 17px; padding: 20px; }
+      .detail-copy { padding-top: 10px; }
+      .detail-copy h3 { font-size: 21px; }
+      .detail-facts { grid-template-columns: 1fr; gap: 9px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Leaf and Lore home"><span class="brand-mark" aria-hidden="true">L</span>leaf &amp; lore</a>
+    <span class="top-note">A little more story in your day</span>
+  </header>
+  <section class="hero" id="top">
+    <p class="eyebrow">Your next good read</p>
+    <h1>Find a book worth<br><span>getting lost in.</span></h1>
+    <p class="hero-copy">Search millions of books and find the story that feels like yours.</p>
+    <form class="search-form" id="searchForm">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input id="searchInput" type="search" placeholder="Try a title, author, or subject..." aria-label="Search books" autocomplete="off">
+      <button class="search-button" id="searchButton" type="submit"><span>Find books</span><span aria-hidden="true">→</span></button>
+    </form>
+    <p class="search-hint">Search by title, author, or the kind of book you love</p>
+  </section>
+  <main>
+    <section aria-labelledby="resultsHeading">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">The reading room</p>
+          <h2 id="resultsHeading">Books to explore</h2>
+          <p class="result-count" id="resultCount">Popular picks to get you started</p>
+        </div>
+        <label class="sort-wrap" for="sortSelect">Sort by
+          <select id="sortSelect" aria-label="Sort books">
+            <option value="relevance">Relevance</option>
+            <option value="rating">Top rated</option>
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="title">Title A–Z</option>
+          </select>
+        </label>
+      </div>
+      <div class="filter-row" id="filterRow" aria-label="Filter books by genre"></div>
+      <div class="book-grid" id="bookGrid" aria-live="polite"></div>
+    </section>
+  </main>
+  <footer>Book information and covers provided by <a href="https://openlibrary.org" target="_blank" rel="noreferrer">Open Library</a>.</footer>
+  <div class="detail-overlay" id="detailOverlay" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <article class="detail-panel">
+      <button class="detail-close" id="detailClose" type="button" aria-label="Close book details">×</button>
+      <img class="detail-cover" id="detailCover" alt="">
+      <div class="detail-copy">
+        <p class="section-kicker">A closer look</p>
+        <h3 id="detailTitle"></h3>
+        <p class="detail-byline" id="detailAuthor"></p>
+        <div class="detail-facts" id="detailFacts"></div>
+        <div class="detail-subjects" id="detailSubjects"></div>
+      </div>
+    </article>
+  </div>
+  <script>
+    const grid = document.querySelector("#bookGrid");
+    const form = document.querySelector("#searchForm");
+    const input = document.querySelector("#searchInput");
+    const button = document.querySelector("#searchButton");
+    const count = document.querySelector("#resultCount");
+    const filterRow = document.querySelector("#filterRow");
+    const sortSelect = document.querySelector("#sortSelect");
+    const overlay = document.querySelector("#detailOverlay");
+    let books = [];
+    let activeFilter = "All books";
+    let lastQuery = "";
+
+    function coverUrl(book, size = "L") {
+      return book.cover_i ? `https://covers.openlibrary.org/b/id/${book.cover_i}-${size}.jpg?default=false` : "";
+    }
+
+    function subjectsOf(book) {
+      return (book.subject || []).slice(0, 10);
+    }
+
+    function makeCard(book, index) {
+      const card = document.createElement("article");
+      card.className = "book-card";
+      card.style.animationDelay = `${Math.min(index * 35, 350)}ms`;
+      const cover = document.createElement("div");
+      cover.className = "cover-wrap";
+      const imageUrl = coverUrl(book);
+      if (imageUrl) {
+        const image = document.createElement("img");
+        image.src = imageUrl;
+        image.alt = `Cover of ${book.title || "book"}`;
+        image.loading = "lazy";
+        image.onerror = () => { image.replaceWith(makeFallback(book.title)); };
+        cover.append(image);
+      } else {
+        cover.append(makeFallback(book.title));
+      }
+      const genre = subjectsOf(book)[0];
+      if (genre) {
+        const tag = document.createElement("span");
+        tag.className = "cover-tag";
+        tag.textContent = genre;
+        cover.append(tag);
+      }
+      const info = document.createElement("div");
+      info.className = "book-info";
+      const title = document.createElement("h3");
+      title.className = "book-title";
+      title.textContent = book.title || "Untitled";
+      const author = document.createElement("p");
+      author.className = "book-author";
+      author.textContent = (book.author_name || ["Unknown author"]).slice(0, 2).join(", ");
+      const meta = document.createElement("div");
+      meta.className = "book-meta";
+      const rating = document.createElement("span");
+      rating.className = "rating";
+      rating.textContent = book.ratings_average ? `★ ${Number(book.ratings_average).toFixed(1)}` : "No rating yet";
+      const year = document.createElement("span");
+      year.textContent = book.first_publish_year || "Year unknown";
+      meta.append(rating, year);
+      info.append(title, author, meta);
+      card.append(cover, info);
+      card.tabIndex = 0;
+      card.setAttribute("role", "button");
+      card.setAttribute("aria-label", `View details for ${book.title || "untitled book"}`);
+      card.addEventListener("click", () => showDetails(book));
+      card.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          showDetails(book);
+        }
+      });
+      return card;
+    }
+
+    function makeFallback(title) {
+      const fallback = document.createElement("div");
+      fallback.className = "cover-fallback";
+      fallback.textContent = title || "A good book";
+      return fallback;
+    }
+
+    function visibleBooks() {
+      const filtered = activeFilter === "All books" ? [...books] : books.filter((book) =>
+        (book.subject || []).some((subject) => subject.toLowerCase() === activeFilter.toLowerCase()) ||
+        (book.author_name || []).some((author) => author === activeFilter)
+      );
+      const sort = sortSelect.value;
+      if (sort === "rating") filtered.sort((a, b) => (b.ratings_average || 0) - (a.ratings_average || 0));
+      if (sort === "newest") filtered.sort((a, b) => (b.first_publish_year || 0) - (a.first_publish_year || 0));
+      if (sort === "oldest") filtered.sort((a, b) => (a.first_publish_year || Infinity) - (b.first_publish_year || Infinity));
+      if (sort === "title") filtered.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+      return filtered;
+    }
+
+    function renderFilters() {
+      filterRow.replaceChildren();
+      const label = document.createElement("span");
+      label.className = "filter-label";
+      label.textContent = "Explore:";
+      filterRow.append(label);
+      const authors = books.flatMap((book) => book.author_name || []).filter(Boolean);
+      const genres = books.flatMap((book) => (book.subject || []).slice(0, 3)).filter(Boolean);
+      const choices = ["All books", ...new Set([...genres, ...authors])].slice(0, 13);
+      choices.forEach((choice) => {
+        const chip = document.createElement("button");
+        chip.className = `filter-chip${activeFilter === choice ? " active" : ""}`;
+        chip.type = "button";
+        chip.textContent = choice;
+        chip.addEventListener("click", () => {
+          activeFilter = choice;
+          renderFilters();
+          renderBooks();
+        });
+        filterRow.append(chip);
+      });
+    }
+
+    function renderBooks() {
+      const shown = visibleBooks();
+      grid.replaceChildren();
+      if (!shown.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        const heading = document.createElement("strong");
+        heading.textContent = activeFilter === "All books" ? "No books found" : "No books in this filter";
+        const message = document.createElement("p");
+        message.textContent = activeFilter === "All books" ? "Try another title, author, or subject." : "Choose another genre or author to keep exploring.";
+        empty.append(heading, message);
+        grid.append(empty);
+      } else {
+        shown.forEach((book, index) => grid.append(makeCard(book, index)));
+      }
+      count.textContent = `${shown.length} ${shown.length === 1 ? "book" : "books"}${lastQuery ? ` for “${lastQuery}”` : " to get you started"}`;
+    }
+
+    async function searchBooks(query) {
+      lastQuery = query;
+      activeFilter = "All books";
+      button.disabled = true;
+      grid.innerHTML = '<div class="loader">Finding your next read...</div>';
+      count.textContent = "Searching the shelves";
+      try {
+        const params = new URLSearchParams({
+          q: query || "bestseller",
+          fields: "key,title,author_name,cover_i,first_publish_year,subject,ratings_average,ratings_count,edition_count,language",
+          limit: "32"
+        });
+        const response = await fetch(`https://openlibrary.org/search.json?${params}`);
+        if (!response.ok) throw new Error("The book catalog is unavailable right now.");
+        const data = await response.json();
+        books = data.docs || [];
+        renderFilters();
+        renderBooks();
+      } catch (error) {
+        books = [];
+        renderFilters();
+        grid.replaceChildren();
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        const heading = document.createElement("strong");
+        heading.textContent = "We couldn't reach the library";
+        const message = document.createElement("p");
+        message.textContent = "Check your internet connection and try your search again.";
+        empty.append(heading, message);
+        grid.append(empty);
+        count.textContent = "Search unavailable";
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    function showDetails(book) {
+      const url = coverUrl(book);
+      const detailCover = document.querySelector("#detailCover");
+      detailCover.src = url || "";
+      detailCover.alt = `Cover of ${book.title || "book"}`;
+      detailCover.hidden = !url;
+      detailCover.onerror = () => { detailCover.hidden = true; };
+      document.querySelector("#detailTitle").textContent = book.title || "Untitled";
+      document.querySelector("#detailAuthor").textContent = (book.author_name || ["Unknown author"]).join(", ");
+      const facts = document.querySelector("#detailFacts");
+      facts.replaceChildren();
+      [
+        ["Published", book.first_publish_year || "Unknown"],
+        ["Reader rating", book.ratings_average ? `${Number(book.ratings_average).toFixed(1)} / 5` : "Not yet rated"],
+        ["Editions", book.edition_count || "Unknown"],
+        ["Languages", (book.language || []).slice(0, 3).join(", ").toUpperCase() || "Unknown"]
+      ].forEach(([label, value]) => {
+        const item = document.createElement("div");
+        item.textContent = label;
+        const strong = document.createElement("strong");
+        strong.textContent = value;
+        item.append(strong);
+        facts.append(item);
+      });
+      const subjects = document.querySelector("#detailSubjects");
+      subjects.replaceChildren();
+      subjectsOf(book).slice(0, 8).forEach((subject) => {
+        const tag = document.createElement("span");
+        tag.textContent = subject;
+        subjects.append(tag);
+      });
+      overlay.classList.add("open");
+      document.querySelector("#detailClose").focus();
+    }
+
+    function closeDetails() {
+      overlay.classList.remove("open");
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      searchBooks(input.value.trim());
+    });
+    sortSelect.addEventListener("change", renderBooks);
+    document.querySelector("#detailClose").addEventListener("click", closeDetails);
+    overlay.addEventListener("click", (event) => { if (event.target === overlay) closeDetails(); });
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeDetails(); });
+    searchBooks("");
+  </script>
+</body>
+</html>
